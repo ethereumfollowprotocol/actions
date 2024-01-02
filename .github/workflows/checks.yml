@@ -37,7 +37,7 @@ on:
         default: ''
 
 concurrency:
-  group: checks-${{ github.workflow }}-${{ github.ref }}-${{ github.sha }}
+  group: checks-${{ github.workflow }}-${{ github.ref }}
 
 defaults:
   run:
@@ -57,12 +57,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 'Install Dependencies'
-        uses: ./.github/actions/setup
+        uses: ethereumfollowprotocol/actions/.github/actions/setup@main
         with:
           bun-version: ${{ github.event.inputs.bun-version }}
           install-dependencies: ${{ github.event.inputs.install-dependencies }}
 
       - name: 'Lint / Build / Test'
-        uses: ./.github/actions/checks
+        uses: ethereumfollowprotocol/actions/.github/actions/checks@main
         with:
           skip-steps: ${{ github.event.inputs.skip-steps }}
