@@ -1,0 +1,76 @@
+name: 'Deploy Cloudflare Worker'
+description: 'deploy worker to Cloudflare Workers'
+
+inputs:
+  CLOUDFLARE_ACCOUNT_ID:
+    description: 'The Cloudflare account ID'
+    required: true
+  CLOUDFLARE_API_TOKEN:
+    description: 'The Cloudflare API token'
+    required: true
+  env:
+    description: 'Environment to deploy to'
+    required: false
+    default: 'production'
+  secrets:
+    description: 'JSON string of secrets to set (sensitive). Format: {"SECRET1":"secret_value1","SECRET2":"secret_value2"}'
+    required: false
+    default: '{}'
+  vars:
+    description: 'JSON string of environment variables to set (non-sensitive). Format: {"VAR1":"var_value1","VAR2":"var_value2"}'
+    required: true
+    default: '{"NODE_ENV":"production"}'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Install Dependencies'
+      uses: ./.github/actions/setup
+      with:
+        bun-version: 'latest'
+        install-dependencies: 'true'
+
+    - name: 'Get Commit SHA'
+      id: get-commit-sha
+      uses: ./.github/actions/commit-sha
+
+    - name: 'Parse Vars'
+      id: get-vars
+      shell: bash
+      run: |
+        echo "VARS=$(echo ${{ inputs.vars }} | jq --raw-output 'to_entries | map("--var \(.key):\"\(.value)\"") | join(" ")')" >> $GITHUB_ENV
+
+    - name: 'Process Secrets'
+      shell: bash
+      run: |
+        echo ${{ inputs.secrets }} > /tmp/worker_secrets.json
+
+    - name: 'Generate Deploy Command'
+      shell: bash
+      env:
+        COMMIT_SHA: ${{ steps.get-commit-sha.outputs.COMMIT_SHA }}
+      run: |
+        COMMAND="\
+          bunx wrangler@latest deploy \
+            --env="${{ inputs.env }}" \
+            --minify=true \
+            --latest=true \
+            --keep-vars=true \
+            --node-compat=true \
+            --config=wrangler.toml \
+            --var ENVIRONMENT:"${{ inputs.env }}" \
+            --var COMMIT_SHA:"${COMMIT_SHA}" \
+            $VARS
+        "
+
+        echo "DEPLOY_COMMAND=$COMMAND" >> $GITHUB_ENV
+
+    - name: '🔶 Deploy Worker'
+      shell: bash
+      env:
+        CLOUDFLARE_ACCOUNT_ID: ${{ inputs.CLOUDFLARE_ACCOUNT_ID }}
+        CLOUDFLARE_API_TOKEN: ${{ inputs.CLOUDFLARE_API_TOKEN }}
+      run: |
+        bunx wrangler@latest secret:bulk < /tmp/worker_secrets.json
+
+        eval $DEPLOY_COMMAND

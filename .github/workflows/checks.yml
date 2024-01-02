@@ -1,0 +1,68 @@
+name: Checks
+
+on:
+  workflow_dispatch:
+    inputs:
+      bun-version:
+        description: 'Bun Version'
+        type: string
+        required: false
+        default: 'latest'
+      install-dependencies:
+        description: 'Install Dependencies'
+        type: boolean
+        required: false
+        default: true
+      skip-steps:
+        description: "Format is comma-seperated steps to skip. Example: 'build,typecheck'"
+        type: string
+        required: false
+        default: ''
+  workflow_call:
+    inputs:
+      bun-version:
+        description: 'Bun Version'
+        type: string
+        required: false
+        default: 'latest'
+      install-dependencies:
+        description: 'Install Dependencies'
+        type: boolean
+        required: false
+        default: true
+      skip-steps:
+        description: "Format is comma-seperated steps to skip. Example: 'build,typecheck'"
+        type: string
+        required: false
+        default: ''
+
+concurrency:
+  group: checks-${{ github.workflow }}-${{ github.ref }}-${{ github.sha }}
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  ACTIONS_RUNNER_DEBUG: true
+  NODE_OPTIONS: '--no-warnings'
+
+jobs:
+  checks:
+    name: '🔍 Checks'
+    timeout-minutes: 3
+    runs-on: ['ubuntu-latest']
+    steps:
+      - name: 🔑 Checkout
+        uses: actions/checkout@v4
+
+      - name: 'Install Dependencies'
+        uses: ./.github/actions/setup
+        with:
+          bun-version: ${{ github.event.inputs.bun-version }}
+          install-dependencies: ${{ github.event.inputs.install-dependencies }}
+
+      - name: 'Lint / Build / Test'
+        uses: ./.github/actions/checks
+        with:
+          skip-steps: ${{ github.event.inputs.skip-steps }}
