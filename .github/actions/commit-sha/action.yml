@@ -18,8 +18,6 @@ runs:
     - name: '⛓️ Get Commit SHA'
       id: get-commit-sha
       shell: bash
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         if [[ "${{ inputs.short }}" == 'true' ]]; then
           echo "COMMIT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
