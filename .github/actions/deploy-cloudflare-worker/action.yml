@@ -25,14 +25,14 @@ runs:
   using: 'composite'
   steps:
     - name: 'Install Dependencies'
-      uses: ./.github/actions/setup
+      uses: ethereumfollowprotocol/actions/.github/actions/setup@main
       with:
         bun-version: 'latest'
         install-dependencies: 'true'
 
     - name: 'Get Commit SHA'
       id: get-commit-sha
-      uses: ./.github/actions/commit-sha
+      uses: ethereumfollowprotocol/actions/.github/actions/commit-sha@main
 
     - name: 'Parse Vars'
       id: get-vars
