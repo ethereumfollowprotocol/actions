@@ -23,7 +23,7 @@ runs:
     - name: '🧪 Typecheck'
       shell: bash
       if: ${{ !contains(inputs.skip-steps, 'typecheck') }}
-      run: bunx tsc --project tsconfig.json --noEmit
+      run: bun run test
 
     - name: '🔧 Build'
       shell: bash
