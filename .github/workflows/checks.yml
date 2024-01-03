@@ -49,7 +49,6 @@ env:
 
 jobs:
   checks:
-    name: '🔍 Checks'
     timeout-minutes: 3
     runs-on: ['ubuntu-latest']
     steps:
