@@ -23,7 +23,7 @@ runs:
     - name: '🧪 Typecheck'
       shell: bash
       if: ${{ !contains(inputs.skip-steps, 'typecheck') }}
-      run: bun run test
+      run: bun run typecheck
 
     - name: '🔧 Build'
       shell: bash
