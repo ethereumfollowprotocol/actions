@@ -30,10 +30,6 @@ runs:
         bun-version: 'latest'
         install-dependencies: 'true'
 
-    - name: 'Get Commit SHA'
-      id: get-commit-sha
-      uses: ethereumfollowprotocol/actions/.github/actions/commit-sha@main
-
     - name: 'Parse Vars'
       id: get-vars
       shell: bash
@@ -47,8 +43,6 @@ runs:
 
     - name: 'Generate Deploy Command'
       shell: bash
-      env:
-        COMMIT_SHA: ${{ steps.get-commit-sha.outputs.COMMIT_SHA }}
       run: |
         COMMAND="\
           bunx wrangler@latest deploy \
@@ -59,7 +53,6 @@ runs:
             --node-compat=true \
             --config=wrangler.toml \
             --var ENVIRONMENT:"${{ inputs.env }}" \
-            --var COMMIT_SHA:"${COMMIT_SHA}" \
             $VARS
         "
 
