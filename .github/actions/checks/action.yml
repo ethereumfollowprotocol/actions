@@ -13,12 +13,12 @@ runs:
     - name: '🧹 Lint'
       shell: bash
       if: ${{ !contains(inputs.skip-steps, 'lint') }}
-      run: bunx biome check --apply .
+      run: bun run lint
 
     - name: '🧹 Format'
       shell: bash
       if: ${{ !contains(inputs.skip-steps, 'format') }}
-      run: bunx biome format . --write
+      run: bun run format
 
     - name: '🧪 Typecheck'
       shell: bash
