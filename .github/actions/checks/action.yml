@@ -9,6 +9,8 @@ inputs:
 
 runs:
   using: composite
+  env:
+    NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: ${{ secrets.WALLET_CONNECT_PROJECT_ID }}
   steps:
     - name: '🧹 Lint'
       shell: bash
