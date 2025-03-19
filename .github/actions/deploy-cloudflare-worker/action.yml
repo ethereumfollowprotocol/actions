@@ -50,7 +50,7 @@ runs:
             --minify=true \
             --latest=true \
             --keep-vars=true \
-            --compatibility-flags = "nodejs_compat" \
+            --compatibility-flags="nodejs_compat" \
             --config=wrangler.toml \
             --var ENVIRONMENT:"${{ inputs.env }}" \
             $VARS
