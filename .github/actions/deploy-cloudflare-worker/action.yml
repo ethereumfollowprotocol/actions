@@ -64,6 +64,6 @@ runs:
         CLOUDFLARE_ACCOUNT_ID: ${{ inputs.CLOUDFLARE_ACCOUNT_ID }}
         CLOUDFLARE_API_TOKEN: ${{ inputs.CLOUDFLARE_API_TOKEN }}
       run: |
-        bunx wrangler@latest secret:bulk < /tmp/worker_secrets.json
+        bunx wrangler@latest secret bulk < /tmp/worker_secrets.json
 
         eval $DEPLOY_COMMAND
